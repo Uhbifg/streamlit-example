@@ -3,36 +3,36 @@ import altair as alt
 import math
 import pandas as pd
 import streamlit as st
+from catboost import CatBoostRegressor
+import numpy as np
 
-"""
-# Welcome to Streamlit!
+st.title("Предсказание времени простоя поезда!")
+X_train = pd.read_parquet("data/train.parquet")
+uploaded_file = st.file_uploader("Choose a file (parquet-like)")
+if uploaded_file is not None:
+  X_test = pd.read_parquet(uploaded_file)
+  st.write(df)
 
-Edit `/streamlit_app.py` to customize this app to your heart's desire :heart:
-
-If you have any questions, checkout our [documentation](https://docs.streamlit.io) and [community
-forums](https://discuss.streamlit.io).
-
-In the meantime, below is an example of what you can do with just a few lines of code:
-"""
+    
+    
+from_file = CatBoostRegressor()
+from_file.load_model("model_last")
 
 
-with st.echo(code_location='below'):
-    total_points = st.slider("Number of points in spiral", 1, 5000, 2000)
-    num_turns = st.slider("Number of turns in spiral", 1, 100, 9)
+@st.experimental_memo
+def convert_df(df):
+   return df.to_csv(index=False).encode('utf-8')
 
-    Point = namedtuple('Point', 'x y')
-    data = []
+test_res = np.exp(model.predict(X_test.drop(columns=shit_cols)))
+answer = pd.DataFrame()
+answer["target"] = test_res
 
-    points_per_turn = total_points / num_turns
+csv = convert_df(answer)
 
-    for curr_point_num in range(total_points):
-        curr_turn, i = divmod(curr_point_num, points_per_turn)
-        angle = (curr_turn + 1) * 2 * math.pi * i / points_per_turn
-        radius = curr_point_num / total_points
-        x = radius * math.cos(angle)
-        y = radius * math.sin(angle)
-        data.append(Point(x, y))
-
-    st.altair_chart(alt.Chart(pd.DataFrame(data), height=500, width=500)
-        .mark_circle(color='#0068c9', opacity=0.5)
-        .encode(x='x:Q', y='y:Q'))
+st.download_button(
+   "Press to Download",
+   csv,
+   "file.csv",
+   "text/csv",
+   key='download-csv'
+)
