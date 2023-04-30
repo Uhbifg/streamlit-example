@@ -1,4 +1,4 @@
 altair
-pandas=1.3.5
+pandas==1.3.5
 streamlit
 catboost
